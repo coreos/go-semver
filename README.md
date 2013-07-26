@@ -1,5 +1,7 @@
 # go-semver - Semantic Versionioning Library
 
+[![Build Status](https://travis-ci.org/coreos/go-semver.png)](https://travis-ci.org/coreos/go-semver)
+
 go-semver is a [semantic versioning][semver] library for Go. It lets you parse
 and compare two semantic version strings.
 
