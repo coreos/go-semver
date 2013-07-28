@@ -10,10 +10,10 @@ and compare two semantic version strings.
 ## Usage
 
 ```
-	vA, err := semver.NewVersion("1.2.3")
-	vB, err := semver.NewVersion("3.2.1")
+vA, err := semver.NewVersion("1.2.3")
+vB, err := semver.NewVersion("3.2.1")
 
-	fmt.Printf("%s < %s == %t\n", vA, vB, vA.LessThan(*vB))
+fmt.Printf("%s < %s == %t\n", vA, vB, vA.LessThan(*vB))
 ```
 
 ## Example Application
