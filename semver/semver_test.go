@@ -1,7 +1,9 @@
 package semver
 
 import (
+	"math/rand"
 	"testing"
+	"time"
 )
 
 type fixture struct {
@@ -79,5 +81,37 @@ func TestString(t *testing.T) {
 			t.Error(err)
 		}
 		testString(t, v.lesserVersion, lt)
+	}
+}
+
+func shuffleStringSlice(src []string) []string {
+	dest := make([]string, len(src))
+	rand.Seed(time.Now().Unix())
+	perm := rand.Perm(len(src))
+	for i, v := range perm {
+		dest[v] = src[i]
+	}
+	return dest
+}
+
+func TestSort(t *testing.T) {
+	sortedVersions := []string{"1.0.0", "1.0.2", "1.2.0", "3.1.1"}
+	unsortedVersions := shuffleStringSlice(sortedVersions)
+
+	semvers := []*Version{}
+	for _, v := range unsortedVersions {
+		sv, err := NewVersion(v)
+		if err != nil {
+			t.Fatal(err)
+		}
+		semvers = append(semvers, sv)
+	}
+
+	Sort(semvers)
+
+	for idx, sv := range semvers {
+		if sv.String() != sortedVersions[idx] {
+			t.Fatalf("incorrect sort at index %v", idx)
+		}
 	}
 }
