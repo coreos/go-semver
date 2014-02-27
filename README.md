@@ -1,4 +1,4 @@
-# go-semver - Semantic Versionioning Library
+# go-semver - Semantic Versioning Library
 
 [![Build Status](https://travis-ci.org/coreos/go-semver.png)](https://travis-ci.org/coreos/go-semver)
 
