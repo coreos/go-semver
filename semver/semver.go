@@ -12,9 +12,11 @@ type Version struct {
 	Major      int64
 	Minor      int64
 	Patch      int64
-	PreRelease string
+	PreRelease PreRelease
 	Metadata   string
 }
+
+type PreRelease string
 
 func splitOff(input *string, delim string) (val string) {
 	parts := strings.SplitN(*input, delim, 2)
@@ -37,7 +39,7 @@ func NewVersion(version string) (*Version, error) {
 	}
 
 	v.Metadata = splitOff(&dotParts[2], "+")
-	v.PreRelease = splitOff(&dotParts[2], "-")
+	v.PreRelease = PreRelease(splitOff(&dotParts[2], "-"))
 
 	parsed := make([]int64, 3, 3)
 
@@ -93,10 +95,14 @@ func (v *Version) Slice() []int64 {
 	return []int64{v.Major, v.Minor, v.Patch}
 }
 
-// TODO: Handle all of the other rules around PreRelease tags from semver.org
+func (p *PreRelease) Slice() []string {
+	preRelease := string(*p)
+	return strings.Split(preRelease, ".")
+}
+
 func preReleaseCompare(versionA Version, versionB Version) int {
 	a := versionA.PreRelease
-	b := versionA.PreRelease
+	b := versionB.PreRelease
 
 	/* Handle the case where if two versions are otherwise equal it is the
 	 * one without a PreRelease that is greater */
@@ -106,7 +112,8 @@ func preReleaseCompare(versionA Version, versionB Version) int {
 		return -1
 	}
 
-	return 0
+	// If there is a prelease, check and compare each part.
+	return recursivePreReleaseCompare(a.Slice(), b.Slice())
 }
 
 func recursiveCompare(versionA []int64, versionB []int64) int {
@@ -124,4 +131,48 @@ func recursiveCompare(versionA []int64, versionB []int64) int {
 	}
 
 	return recursiveCompare(versionA[1:], versionB[1:])
+}
+
+func recursivePreReleaseCompare(versionA []string, versionB []string) int {
+	// Handle slice length disparity.
+	if len(versionA) == 0 {
+		// Nothing to compare too, so we return 0
+		return 0
+	} else if len(versionB) == 0 {
+		// We're longer than versionB so return 1.
+		return 1
+	}
+
+	a := versionA[0]
+	b := versionB[0]
+
+	aInt := false; bInt := false
+
+	aI, err := strconv.Atoi(versionA[0])
+	if err == nil {
+		aInt = true
+	}
+
+	bI, err := strconv.Atoi(versionB[0])
+	if err == nil {
+		bInt = true
+	}
+
+	// Handle Integer Comparison
+	if aInt && bInt {
+		if aI > bI {
+			return 1
+		} else if aI < bI {
+			return -1
+		}
+	}
+
+	// Handle String Comparison
+	if a > b {
+		return 1
+	} else if a < b {
+		return -1
+	}
+
+	return recursivePreReleaseCompare(versionA[1:], versionB[1:])
 }

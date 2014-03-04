@@ -42,6 +42,14 @@ var fixtures = []fixture{
 	fixture{"1.2.3-a.b", "1.2.3-a.5"},
 	fixture{"1.2.3-a.b", "1.2.3-a"},
 	fixture{"1.2.3-a.b.c.10.d.5", "1.2.3-a.b.c.5.d.100"},
+	fixture{"1.0.0", "1.0.0-rc.1"},
+	fixture{"1.0.0-rc.2", "1.0.0-rc.1"},
+	fixture{"1.0.0-rc.1", "1.0.0-beta.11"},
+	fixture{"1.0.0-beta.11", "1.0.0-beta.2"},
+	fixture{"1.0.0-beta.2", "1.0.0-beta"},
+	fixture{"1.0.0-beta", "1.0.0-alpha.beta"},
+	fixture{"1.0.0-alpha.beta", "1.0.0-alpha.1"},
+	fixture{"1.0.0-alpha.1", "1.0.0-alpha"},
 }
 
 func TestCompare(t *testing.T) {
