@@ -29,4 +29,3 @@ $ go run example.go 5.2.3 3.2.1
 ## TODO
 
 - Richer comparision operations
-- Full compliance with semver.org rules on pre-release parsing
