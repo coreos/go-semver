@@ -176,3 +176,30 @@ func recursivePreReleaseCompare(versionA []string, versionB []string) int {
 
 	return recursivePreReleaseCompare(versionA[1:], versionB[1:])
 }
+
+// BumpMajor increments the Major field by 1 and resets all other fields to their default values
+func (v *Version) BumpMajor() *Version {
+	v.Major += 1
+	v.Minor = 0
+	v.Patch = 0
+	v.PreRelease = PreRelease("")
+	v.Metadata = ""
+	return v
+}
+
+// BumpMinor increments the Minor field by 1 and resets all other fields to their default values
+func (v *Version) BumpMinor() *Version {
+	v.Minor += 1
+	v.Patch = 0
+	v.PreRelease = PreRelease("")
+	v.Metadata = ""
+	return v
+}
+
+// BumpPatch increments the Patch field by 1 and resets all other fields to their default values
+func (v *Version) BumpPatch() *Version {
+	v.Patch += 1
+	v.PreRelease = PreRelease("")
+	v.Metadata = ""
+	return v
+}

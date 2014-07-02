@@ -123,3 +123,61 @@ func TestSort(t *testing.T) {
 		}
 	}
 }
+
+func TestBumpMajor(t *testing.T) {
+	version, _ := NewVersion("1.0.0")
+	bumped := version.BumpMajor()
+	if bumped.Major != 2 {
+		t.Fatalf("bumping major on 1.0.0 resulted in %v", bumped)
+	}
+
+	version, _ = NewVersion("1.5.2")
+	if bumped.Minor != 0 && bumped.Patch != 0 {
+		t.Fatalf("bumping major on 1.5.2 resulted in %v", bumped)
+	}
+
+	version, _ = NewVersion("1.0.0+build.1-alpha.1")
+	if bumped.PreRelease != "" && bumped.PreRelease != "" {
+		t.Fatalf("bumping major on 1.0.0+build.1-alpha.1 resulted in %v", bumped)
+	}
+}
+
+func TestBumpMinor(t *testing.T) {
+	version, _ := NewVersion("1.0.0")
+	bumped := version.BumpMinor()
+
+	if bumped.Major != 1 {
+		t.Fatalf("bumping minor on 1.0.0 resulted in %v", bumped)
+	}
+
+	if bumped.Minor != 1 {
+		t.Fatalf("bumping major on 1.0.0 resulted in %v", bumped)
+	}
+
+	version, _ = NewVersion("1.0.0+build.1-alpha.1")
+	if bumped.PreRelease != "" && bumped.PreRelease != "" {
+		t.Fatalf("bumping major on 1.0.0+build.1-alpha.1 resulted in %v", bumped)
+	}
+}
+
+func TestBumpPatch(t *testing.T) {
+	version, _ := NewVersion("1.0.0")
+	bumped := version.BumpPatch()
+
+	if bumped.Major != 1 {
+		t.Fatalf("bumping minor on 1.0.0 resulted in %v", bumped)
+	}
+
+	if bumped.Minor != 0 {
+		t.Fatalf("bumping major on 1.0.0 resulted in %v", bumped)
+	}
+
+	if bumped.Patch != 1 {
+		t.Fatalf("bumping major on 1.0.0 resulted in %v", bumped)
+	}
+
+	version, _ = NewVersion("1.0.0+build.1-alpha.1")
+	if bumped.PreRelease != "" && bumped.PreRelease != "" {
+		t.Fatalf("bumping major on 1.0.0+build.1-alpha.1 resulted in %v", bumped)
+	}
+}
