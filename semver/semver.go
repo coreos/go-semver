@@ -82,6 +82,26 @@ func (v *Version) String() string {
 	return buffer.String()
 }
 
+func (v *Version) MarshalJSON() ([]byte, error) {
+	return []byte(`"` + v.String() + `"`), nil
+}
+
+func (v *Version) UnmarshalJSON(data []byte) error {
+	l := len(data)
+	if l == 0 || string(data) == `""` {
+		return nil
+	}
+	if l < 2 || data[0] != '"' || data[l-1] != '"' {
+		return errors.New("invalid semver string")
+	}
+	vv, err := NewVersion(string(data[1 : l-1]))
+	if err != nil {
+		return err
+	}
+	*v = *vv
+	return nil
+}
+
 func (v *Version) LessThan(versionB Version) bool {
 	versionA := *v
 	cmp := recursiveCompare(versionA.Slice(), versionB.Slice())

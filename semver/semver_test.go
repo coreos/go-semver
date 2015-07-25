@@ -1,6 +1,8 @@
 package semver
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"math/rand"
 	"reflect"
@@ -9,8 +11,8 @@ import (
 )
 
 type fixture struct {
-	greaterVersion string
-	lesserVersion  string
+	GreaterVersion string
+	LesserVersion  string
 }
 
 var fixtures = []fixture{
@@ -56,12 +58,12 @@ var fixtures = []fixture{
 
 func TestCompare(t *testing.T) {
 	for _, v := range fixtures {
-		gt, err := NewVersion(v.greaterVersion)
+		gt, err := NewVersion(v.GreaterVersion)
 		if err != nil {
 			t.Error(err)
 		}
 
-		lt, err := NewVersion(v.lesserVersion)
+		lt, err := NewVersion(v.LesserVersion)
 		if err != nil {
 			t.Error(err)
 		}
@@ -80,17 +82,17 @@ func testString(t *testing.T, orig string, version *Version) {
 
 func TestString(t *testing.T) {
 	for _, v := range fixtures {
-		gt, err := NewVersion(v.greaterVersion)
+		gt, err := NewVersion(v.GreaterVersion)
 		if err != nil {
 			t.Error(err)
 		}
-		testString(t, v.greaterVersion, gt)
+		testString(t, v.GreaterVersion, gt)
 
-		lt, err := NewVersion(v.lesserVersion)
+		lt, err := NewVersion(v.LesserVersion)
 		if err != nil {
 			t.Error(err)
 		}
-		testString(t, v.lesserVersion, lt)
+		testString(t, v.LesserVersion, lt)
 	}
 }
 
@@ -219,5 +221,48 @@ func TestMust(t *testing.T) {
 				t.Fatalf("incorrect version for %q: want %+v, got %+v", tt.versionStr, tt.version, version)
 			}
 		}()
+	}
+}
+
+type fixtureJSON struct {
+	GreaterVersion *Version
+	LesserVersion  *Version
+}
+
+func TestJSON(t *testing.T) {
+	fj := make([]fixtureJSON, len(fixtures))
+	for i, v := range fixtures {
+		var err error
+		fj[i].GreaterVersion, err = NewVersion(v.GreaterVersion)
+		if err != nil {
+			t.Fatal(err)
+		}
+		fj[i].LesserVersion, err = NewVersion(v.LesserVersion)
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	fromStrings, err := json.Marshal(fixtures)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fromVersions, err := json.Marshal(fj)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(fromStrings, fromVersions) {
+		t.Errorf("Expected:   %s", fromStrings)
+		t.Errorf("Unexpected: %s", fromVersions)
+	}
+
+	fromJson := make([]fixtureJSON, 0, len(fj))
+	err = json.Unmarshal(fromStrings, &fromJson)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(fromJson, fj) {
+		t.Error("Expected:   ", fj)
+		t.Error("Unexpected: ", fromJson)
 	}
 }
