@@ -32,14 +32,14 @@ func splitOff(input *string, delim string) (val string) {
 func NewVersion(version string) (*Version, error) {
 	v := Version{}
 
+	v.Metadata = splitOff(&version, "+")
+	v.PreRelease = PreRelease(splitOff(&version, "-"))
+
 	dotParts := strings.SplitN(version, ".", 3)
 
 	if len(dotParts) != 3 {
 		return nil, errors.New(fmt.Sprintf("%s is not in dotted-tri format", version))
 	}
-
-	v.Metadata = splitOff(&dotParts[2], "+")
-	v.PreRelease = PreRelease(splitOff(&dotParts[2], "-"))
 
 	parsed := make([]int64, 3, 3)
 

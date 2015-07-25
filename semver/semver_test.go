@@ -266,3 +266,18 @@ func TestJSON(t *testing.T) {
 		t.Error("Unexpected: ", fromJson)
 	}
 }
+
+func TestBadInput(t *testing.T) {
+	bad := []string{
+		"1.2",
+		"1.2.3x",
+		"0x1.3.4",
+		"-1.2.3",
+		"1.2.3.4",
+	}
+	for _, b := range bad {
+		if _, err := NewVersion(b); err == nil {
+			t.Error("Improperly accepted value: ", b)
+		}
+	}
+}
