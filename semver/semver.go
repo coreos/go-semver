@@ -131,7 +131,7 @@ func (v *Version) LessThan(versionB Version) bool {
 	return false
 }
 
-/* Slice converts the comparable parts of the semver into a slice of strings */
+/* Slice converts the comparable parts of the semver into a slice of integers */
 func (v *Version) Slice() []int64 {
 	return []int64{v.Major, v.Minor, v.Patch}
 }
@@ -153,7 +153,7 @@ func preReleaseCompare(versionA Version, versionB Version) int {
 		return -1
 	}
 
-	// If there is a prelease, check and compare each part.
+	// If there is a prerelease, check and compare each part.
 	return recursivePreReleaseCompare(a.Slice(), b.Slice())
 }
 
