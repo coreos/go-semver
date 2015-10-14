@@ -175,9 +175,12 @@ func recursiveCompare(versionA []int64, versionB []int64) int {
 }
 
 func recursivePreReleaseCompare(versionA []string, versionB []string) int {
-	// Handle slice length disparity.
+	// A larger set of pre-release fields has a higher precedence than a smaller set,
+	// if all of the preceding identifiers are equal.
 	if len(versionA) == 0 {
-		// Nothing to compare too, so we return 0
+		if len(versionB) > 0 {
+			return -1
+		}
 		return 0
 	} else if len(versionB) == 0 {
 		// We're longer than versionB so return 1.
