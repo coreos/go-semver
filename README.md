@@ -25,7 +25,3 @@ $ go run example.go 1.2.3 3.2.1
 $ go run example.go 5.2.3 3.2.1
 5.2.3 < 3.2.1 == false
 ```
-
-## TODO
-
-- Richer comparision operations
