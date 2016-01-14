@@ -82,8 +82,20 @@ func TestCompare(t *testing.T) {
 			t.Error(err)
 		}
 
-		if gt.LessThan(*lt) == true {
+		if gt.LessThan(*lt) {
 			t.Errorf("%s should not be less than %s", gt, lt)
+		}
+		if gt.Equal(*lt) {
+			t.Errorf("%s should not be equal to %s", gt, lt)
+		}
+		if !lt.LessThan(*gt) {
+			t.Errorf("%s should be less than %s", lt, gt)
+		}
+		if !lt.LessOrEqual(*gt) {
+			t.Errorf("%s should be less than or equal to %s", lt, gt)
+		}
+		if !lt.Equal(*lt) {
+			t.Errorf("%s should be equal to %s", lt, lt)
 		}
 	}
 }
