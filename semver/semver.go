@@ -116,19 +116,34 @@ func (v *Version) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+/*
+ * Comparison operators (https://en.wikipedia.org/wiki/Total_order)
+ */
+func (v *Version) Cmp(versionB Version) int {
+	if cmp := recursiveCompare(v.Slice(), versionB.Slice()); cmp != 0 {
+		return cmp
+	}
+	return preReleaseCompare(*v, versionB)
+}
+
 func (v *Version) LessThan(versionB Version) bool {
-	versionA := *v
-	cmp := recursiveCompare(versionA.Slice(), versionB.Slice())
+	return v.Cmp(versionB) == -1
+}
 
-	if cmp == 0 {
-		cmp = preReleaseCompare(versionA, versionB)
-	}
+func (v *Version) Equal(versionB Version) bool {
+	return v.Cmp(versionB) == 0
+}
 
-	if cmp == -1 {
-		return true
-	}
+func (v *Version) LessOrEqual(versionB Version) bool {
+	return v.LessThan(versionB) || v.Equal(versionB)
+}
 
-	return false
+func (v *Version) GreaterThan(versionB Version) bool {
+	return versionB.LessThan(*v)
+}
+
+func (v *Version) GreaterOrEqual(versionB Version) bool {
+	return !v.LessThan(versionB)
 }
 
 /* Slice converts the comparable parts of the semver into a slice of integers */
