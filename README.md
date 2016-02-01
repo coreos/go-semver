@@ -7,8 +7,8 @@ go-semver is a [semantic versioning](http://semver.org) library for Go. It lets 
 ## Usage
 
 ```go
-vA, err := semver.NewVersion("1.2.3")
-vB, err := semver.NewVersion("3.2.1")
+vA := semver.New("1.2.3")
+vB := semver.New("3.2.1")
 
 fmt.Printf("%s < %s == %t\n", vA, vB, vA.LessThan(*vB))
 ```
@@ -52,8 +52,8 @@ func (a *Version) GreaterOrEqual(b Version) bool
 
 As per [specification](http://semver.org), each of these ignore build metadata:
 ```go
-vA, err := semver.NewVersion("1.0.0+exp.sha.5114f85")
-vB, err := semver.NewVersion("1.0.0+20130313144700")
+vA := semver.New("1.0.0+exp.sha.5114f85")
+vB := semver.New("1.0.0+20130313144700")
 
 fmt.Printf("%s == %s: %t\n", vA, vB, vA.Equal(*vB)) // true
 ```

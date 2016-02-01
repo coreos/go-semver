@@ -44,6 +44,10 @@ func splitOff(input *string, delim string) (val string) {
 	return val
 }
 
+func New(version string) *Version {
+	return Must(NewVersion(version))
+}
+
 func NewVersion(version string) (*Version, error) {
 	v := Version{}
 
