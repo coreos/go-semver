@@ -84,7 +84,7 @@ func Must(v *Version, err error) *Version {
 	return v
 }
 
-func (v *Version) String() string {
+func (v Version) String() string {
 	var buffer bytes.Buffer
 
 	fmt.Fprintf(&buffer, "%d.%d.%d", v.Major, v.Minor, v.Patch)
