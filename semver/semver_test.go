@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"flag"
 	"math/rand"
 	"reflect"
 	"testing"
@@ -326,5 +327,19 @@ func TestBadInput(t *testing.T) {
 		if _, err := NewVersion(b); err == nil {
 			t.Error("Improperly accepted value: ", b)
 		}
+	}
+}
+
+func TestFlag(t *testing.T) {
+	v := Version{}
+	f := flag.NewFlagSet("version", flag.ContinueOnError)
+	f.Var(&v, "version", "set version")
+
+	if err := f.Set("version", "1.2.3"); err != nil {
+		t.Fatal(err)
+	}
+
+	if v.String() != "1.2.3" {
+		t.Errorf("Set wrong value %q", v)
 	}
 }
