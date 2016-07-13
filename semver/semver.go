@@ -47,13 +47,29 @@ func splitOff(input *string, delim string) (val string) {
 func NewVersion(version string) (*Version, error) {
 	v := Version{}
 
-	v.Metadata = splitOff(&version, "+")
-	v.PreRelease = PreRelease(splitOff(&version, "-"))
+	if err := v.Set(version); err != nil {
+		return nil, err
+	}
 
+	return &v, nil
+}
+
+// Must is a helper for wrapping NewVersion and will panic if err is not nil.
+func Must(v *Version, err error) *Version {
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
+// Set parses and updates v from the given version string. Implements flag.Value
+func (v *Version) Set(version string) error {
+	metadata := splitOff(&version, "+")
+	preRelease := PreRelease(splitOff(&version, "-"))
 	dotParts := strings.SplitN(version, ".", 3)
 
 	if len(dotParts) != 3 {
-		return nil, errors.New(fmt.Sprintf("%s is not in dotted-tri format", version))
+		return fmt.Errorf("%s is not in dotted-tri format", version)
 	}
 
 	parsed := make([]int64, 3, 3)
@@ -62,22 +78,16 @@ func NewVersion(version string) (*Version, error) {
 		val, err := strconv.ParseInt(v, 10, 64)
 		parsed[i] = val
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
+	v.Metadata = metadata
+	v.PreRelease = preRelease
 	v.Major = parsed[0]
 	v.Minor = parsed[1]
 	v.Patch = parsed[2]
-
-	return &v, nil
-}
-
-func Must(v *Version, err error) *Version {
-	if err != nil {
-		panic(err)
-	}
-	return v
+	return nil
 }
 
 func (v Version) String() string {
