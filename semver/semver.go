@@ -111,12 +111,7 @@ func (v *Version) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if err := unmarshal(&data); err != nil {
 		return err
 	}
-	vv, err := NewVersion(data)
-	if err != nil {
-		return err
-	}
-	*v = *vv
-	return nil
+	return v.Set(data)
 }
 
 func (v Version) MarshalJSON() ([]byte, error) {
@@ -131,12 +126,7 @@ func (v *Version) UnmarshalJSON(data []byte) error {
 	if l < 2 || data[0] != '"' || data[l-1] != '"' {
 		return errors.New("invalid semver string")
 	}
-	vv, err := NewVersion(string(data[1 : l-1]))
-	if err != nil {
-		return err
-	}
-	*v = *vv
-	return nil
+	return v.Set(string(data[1 : l-1]))
 }
 
 func (v Version) LessThan(versionB Version) bool {
