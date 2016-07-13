@@ -44,6 +44,10 @@ func splitOff(input *string, delim string) (val string) {
 	return val
 }
 
+func New(version string) *Version {
+	return Must(NewVersion(version))
+}
+
 func NewVersion(version string) (*Version, error) {
 	v := Version{}
 
@@ -139,22 +143,26 @@ func (v *Version) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (v Version) LessThan(versionB Version) bool {
-	versionA := v
-	cmp := recursiveCompare(versionA.Slice(), versionB.Slice())
-
-	if cmp == 0 {
-		cmp = preReleaseCompare(versionA, versionB)
+// Compare tests if v is less than, equal to, or greater than versionB,
+// returning -1, 0, or +1 respectively.
+func (v Version) Compare(versionB Version) int {
+	if cmp := recursiveCompare(v.Slice(), versionB.Slice()); cmp != 0 {
+		return cmp
 	}
-
-	if cmp == -1 {
-		return true
-	}
-
-	return false
+	return preReleaseCompare(v, versionB)
 }
 
-/* Slice converts the comparable parts of the semver into a slice of strings */
+// Equal tests if v is equal to versionB.
+func (v Version) Equal(versionB Version) bool {
+	return v.Compare(versionB) == 0
+}
+
+// LessThan tests if v is less than versionB.
+func (v Version) LessThan(versionB Version) bool {
+	return v.Compare(versionB) < 0
+}
+
+// Slice converts the comparable parts of the semver into a slice of integers.
 func (v Version) Slice() []int64 {
 	return []int64{v.Major, v.Minor, v.Patch}
 }
@@ -176,7 +184,7 @@ func preReleaseCompare(versionA Version, versionB Version) int {
 		return -1
 	}
 
-	// If there is a prelease, check and compare each part.
+	// If there is a prerelease, check and compare each part.
 	return recursivePreReleaseCompare(a.Slice(), b.Slice())
 }
 
@@ -198,9 +206,12 @@ func recursiveCompare(versionA []int64, versionB []int64) int {
 }
 
 func recursivePreReleaseCompare(versionA []string, versionB []string) int {
-	// Handle slice length disparity.
+	// A larger set of pre-release fields has a higher precedence than a smaller set,
+	// if all of the preceding identifiers are equal.
 	if len(versionA) == 0 {
-		// Nothing to compare too, so we return 0
+		if len(versionB) > 0 {
+			return -1
+		}
 		return 0
 	} else if len(versionB) == 0 {
 		// We're longer than versionB so return 1.
