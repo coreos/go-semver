@@ -143,19 +143,23 @@ func (v *Version) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// Compare tests if v is less than, equal to, or greater than versionB,
+// returning -1, 0, or +1 respectively.
+func (v Version) Compare(versionB Version) int {
+	if cmp := recursiveCompare(v.Slice(), versionB.Slice()); cmp != 0 {
+		return cmp
+	}
+	return preReleaseCompare(v, versionB)
+}
+
+// Equal tests if v is equal to versionB.
+func (v Version) Equal(versionB Version) bool {
+	return v.Compare(versionB) == 0
+}
+
+// LessThan tests if v is less than versionB.
 func (v Version) LessThan(versionB Version) bool {
-	versionA := v
-	cmp := recursiveCompare(versionA.Slice(), versionB.Slice())
-
-	if cmp == 0 {
-		cmp = preReleaseCompare(versionA, versionB)
-	}
-
-	if cmp == -1 {
-		return true
-	}
-
-	return false
+	return v.Compare(versionB) < 0
 }
 
 // Slice converts the comparable parts of the semver into a slice of integers.
