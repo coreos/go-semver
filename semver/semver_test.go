@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"errors"
 	"flag"
+	"fmt"
 	"math/rand"
 	"reflect"
 	"testing"
@@ -357,4 +358,13 @@ func TestFlag(t *testing.T) {
 	if v.String() != "1.2.3" {
 		t.Errorf("Set wrong value %q", v)
 	}
+}
+
+func ExampleVersion_LessThan() {
+	vA := New("1.2.3")
+	vB := New("3.2.1")
+
+	fmt.Printf("%s < %s == %t\n", vA, vB, vA.LessThan(*vB))
+	// Output:
+	// 1.2.3 < 3.2.1 == true
 }
