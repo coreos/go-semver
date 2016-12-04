@@ -176,7 +176,7 @@ func TestBumpMajor(t *testing.T) {
 
 	version, _ = NewVersion("1.0.0+build.1-alpha.1")
 	version.BumpMajor()
-	if version.PreRelease != "" && version.PreRelease != "" {
+	if version.PreRelease != "" && version.Metadata != "" {
 		t.Fatalf("bumping major on 1.0.0+build.1-alpha.1 resulted in %v", version)
 	}
 }
@@ -195,7 +195,7 @@ func TestBumpMinor(t *testing.T) {
 
 	version, _ = NewVersion("1.0.0+build.1-alpha.1")
 	version.BumpMinor()
-	if version.PreRelease != "" && version.PreRelease != "" {
+	if version.PreRelease != "" && version.Metadata != "" {
 		t.Fatalf("bumping major on 1.0.0+build.1-alpha.1 resulted in %v", version)
 	}
 }
@@ -218,7 +218,7 @@ func TestBumpPatch(t *testing.T) {
 
 	version, _ = NewVersion("1.0.0+build.1-alpha.1")
 	version.BumpPatch()
-	if version.PreRelease != "" && version.PreRelease != "" {
+	if version.PreRelease != "" && version.Metadata != "" {
 		t.Fatalf("bumping major on 1.0.0+build.1-alpha.1 resulted in %v", version)
 	}
 }
