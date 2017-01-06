@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/coreos/go-semver/semver"
 	"os"
+
+	"github.com/coreos/go-semver/semver"
 )
 
 func main() {
@@ -16,5 +17,5 @@ func main() {
 		fmt.Println(err.Error())
 	}
 
-	fmt.Printf("%s < %s == %t\n", vA, vB, vA.LessThan(*vB))
+	fmt.Printf("%s < %s == %t\n", vA, vB, vA.LessThan(vB))
 }
