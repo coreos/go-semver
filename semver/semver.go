@@ -94,7 +94,7 @@ func (v *Version) Set(version string) error {
 	return nil
 }
 
-func (v Version) String() string {
+func (v *Version) String() string {
 	var buffer bytes.Buffer
 
 	fmt.Fprintf(&buffer, "%d.%d.%d", v.Major, v.Minor, v.Patch)
@@ -118,7 +118,7 @@ func (v *Version) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	return v.Set(data)
 }
 
-func (v Version) MarshalJSON() ([]byte, error) {
+func (v *Version) MarshalJSON() ([]byte, error) {
 	return []byte(`"` + v.String() + `"`), nil
 }
 
@@ -135,7 +135,7 @@ func (v *Version) UnmarshalJSON(data []byte) error {
 
 // Compare tests if v is less than, equal to, or greater than versionB,
 // returning -1, 0, or +1 respectively.
-func (v Version) Compare(versionB Version) int {
+func (v *Version) Compare(versionB *Version) int {
 	if cmp := recursiveCompare(v.Slice(), versionB.Slice()); cmp != 0 {
 		return cmp
 	}
@@ -143,17 +143,17 @@ func (v Version) Compare(versionB Version) int {
 }
 
 // Equal tests if v is equal to versionB.
-func (v Version) Equal(versionB Version) bool {
+func (v *Version) Equal(versionB *Version) bool {
 	return v.Compare(versionB) == 0
 }
 
 // LessThan tests if v is less than versionB.
-func (v Version) LessThan(versionB Version) bool {
+func (v *Version) LessThan(versionB *Version) bool {
 	return v.Compare(versionB) < 0
 }
 
 // Slice converts the comparable parts of the semver into a slice of integers.
-func (v Version) Slice() []int64 {
+func (v *Version) Slice() []int64 {
 	return []int64{v.Major, v.Minor, v.Patch}
 }
 
@@ -162,7 +162,7 @@ func (p PreRelease) Slice() []string {
 	return strings.Split(preRelease, ".")
 }
 
-func preReleaseCompare(versionA Version, versionB Version) int {
+func preReleaseCompare(versionA *Version, versionB *Version) int {
 	a := versionA.PreRelease
 	b := versionB.PreRelease
 
