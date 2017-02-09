@@ -224,6 +224,7 @@ func recursivePreReleaseCompare(versionA []string, versionB []string) int {
 		bInt = true
 	}
 
+	// Numeric identifiers always have lower precedence than non-numeric identifiers.
 	if aInt && !bInt {
 		return -1
 	} else if !aInt && bInt {
