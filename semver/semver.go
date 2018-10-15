@@ -80,7 +80,7 @@ func (v *Version) Set(version string) error {
 	dotParts := strings.SplitN(version, ".", 3)
 
 	if len(dotParts) != 3 {
-		return fmt.Errorf("%s is not in dotted-tri format", version)
+		return fmt.Errorf("%s is not in dotted-tri format", v.Prefix + version)
 	}
 
 	if err := validateIdentifier(string(preRelease)); err != nil {
