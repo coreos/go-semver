@@ -30,6 +30,7 @@ type Version struct {
 	Patch      int64
 	PreRelease PreRelease
 	Metadata   string
+	Prefix string
 }
 
 type PreRelease string
@@ -69,6 +70,11 @@ func Must(v *Version, err error) *Version {
 
 // Set parses and updates v from the given version string. Implements flag.Value
 func (v *Version) Set(version string) error {
+	if strings.HasPrefix(version, "v") {
+		version = version[1:]
+		v.Prefix = "v"
+	}
+
 	metadata := splitOff(&version, "+")
 	preRelease := PreRelease(splitOff(&version, "-"))
 	dotParts := strings.SplitN(version, ".", 3)
@@ -106,7 +112,7 @@ func (v *Version) Set(version string) error {
 func (v Version) String() string {
 	var buffer bytes.Buffer
 
-	fmt.Fprintf(&buffer, "%d.%d.%d", v.Major, v.Minor, v.Patch)
+	fmt.Fprintf(&buffer, "%s%d.%d.%d", v.Prefix, v.Major, v.Minor, v.Patch)
 
 	if v.PreRelease != "" {
 		fmt.Fprintf(&buffer, "-%s", v.PreRelease)
