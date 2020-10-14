@@ -8,4 +8,9 @@ go:
   - 1.5
   - 1.6
   - tip
+# Disable version 1.4
+jobs: 
+  exclude:
+    - arch: ppc64le
+      go: 1.4
 script: cd semver && go test
