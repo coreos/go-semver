@@ -1,8 +1,10 @@
 language: go
 sudo: false
+arch:
+  - AMD64
+  - ppc64le
 go:
-  - 1.4
-  - 1.5
-  - 1.6
+  - 1.14
+  - 1.15
   - tip
 script: cd semver && go test
