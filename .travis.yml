@@ -9,3 +9,8 @@ go:
   - 1.6
   - tip
 script: cd semver && go test
+
+matrix: 
+   allow_failures:
+    - go: "1.4.x"
+
