@@ -132,8 +132,7 @@ func TestString(t *testing.T) {
 
 func shuffleStringSlice(src []string) []string {
 	dest := make([]string, len(src))
-	rand.Seed(time.Now().Unix())
-	perm := rand.Perm(len(src))
+	perm := rand.New(rand.NewSource(time.Now().Unix())).Perm(len(src))
 	for i, v := range perm {
 		dest[v] = src[i]
 	}
