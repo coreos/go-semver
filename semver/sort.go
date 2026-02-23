@@ -29,7 +29,7 @@ func (s Versions) Swap(i, j int) {
 }
 
 func (s Versions) Less(i, j int) bool {
-	return s[i].LessThan(*s[j])
+	return s[i].LessThan(s[j])
 }
 
 // Sort sorts the given slice of Version
