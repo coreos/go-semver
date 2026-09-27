@@ -370,3 +370,18 @@ func ExampleVersion_LessThan() {
 	// Output:
 	// 1.2.3 < 3.2.1 == true
 }
+
+func TestLeadingZeroPreRelease(t *testing.T) {
+	invalid := []string{"0.0.0-01", "1.0.0-rc.01", "1.2.3+01", "1.0.0-0.01"}
+	for _, s := range invalid {
+		if _, err := NewVersion(s); err == nil {
+			t.Errorf("expected error for %q", s)
+		}
+	}
+	valid := []string{"0.0.0-0", "0.0.0-1", "0.0.0-01a", "0.0.0-a01", "1.0.0-rc.1", "1.2.3+1"}
+	for _, s := range valid {
+		if _, err := NewVersion(s); err != nil {
+			t.Errorf("unexpected error for %q: %v", s, err)
+		}
+	}
+}

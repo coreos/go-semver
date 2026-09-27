@@ -283,12 +283,33 @@ func (v *Version) BumpPatch() {
 	v.Metadata = ""
 }
 
-// validateIdentifier makes sure the provided identifier satisfies semver spec
+// validateIdentifier makes sure the provided identifier satisfies semver spec.
+// Numeric identifiers must not have leading zeroes (SemVer 2.0.0 §9 / §10).
 func validateIdentifier(id string) error {
-	if id != "" && !reIdentifier.MatchString(id) {
+	if id == "" {
+		return nil
+	}
+	if !reIdentifier.MatchString(id) {
 		return fmt.Errorf("%s is not a valid semver identifier", id)
 	}
+	for _, part := range strings.Split(id, ".") {
+		if isNumericIdentifier(part) && len(part) > 1 && part[0] == '0' {
+			return fmt.Errorf("%s is not a valid semver identifier: numeric identifiers must not have leading zeroes", id)
+		}
+	}
 	return nil
+}
+
+func isNumericIdentifier(s string) bool {
+	if s == "" {
+		return false
+	}
+	for i := 0; i < len(s); i++ {
+		if s[i] < '0' || s[i] > '9' {
+			return false
+		}
+	}
+	return true
 }
 
 // reIdentifier is a regular expression used to check that pre-release and metadata
