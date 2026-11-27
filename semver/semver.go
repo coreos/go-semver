@@ -220,32 +220,27 @@ func recursivePreReleaseCompare(versionA []string, versionB []string) int {
 	a := versionA[0]
 	b := versionB[0]
 
-	aInt := false
-	bInt := false
-
-	aI, err := strconv.Atoi(versionA[0])
-	if err == nil {
-		aInt = true
-	}
-
-	bI, err := strconv.Atoi(versionB[0])
-	if err == nil {
-		bInt = true
-	}
+	aNumeric := isNumericIdentifier(a)
+	bNumeric := isNumericIdentifier(b)
 
 	// Numeric identifiers always have lower precedence than non-numeric identifiers.
-	if aInt && !bInt {
-		return -1
-	} else if !aInt && bInt {
+	if aNumeric != bNumeric {
+		if aNumeric {
+			return -1
+		}
 		return 1
 	}
-
-	// Handle Integer Comparison
-	if aInt && bInt {
-		if aI > bI {
-			return 1
-		} else if aI < bI {
+	if aNumeric {
+		aDigits := strings.TrimLeft(a, "0")
+		bDigits := strings.TrimLeft(b, "0")
+		if len(aDigits) < len(bDigits) {
 			return -1
+		}
+		if len(aDigits) > len(bDigits) {
+			return 1
+		}
+		if cmp := strings.Compare(aDigits, bDigits); cmp != 0 {
+			return cmp
 		}
 	}
 
@@ -257,6 +252,15 @@ func recursivePreReleaseCompare(versionA []string, versionB []string) int {
 	}
 
 	return recursivePreReleaseCompare(versionA[1:], versionB[1:])
+}
+
+func isNumericIdentifier(s string) bool {
+	for _, c := range s {
+		if c < '0' || c > '9' {
+			return false
+		}
+	}
+	return s != ""
 }
 
 // BumpMajor increments the Major field by 1 and resets all other fields to their default values
