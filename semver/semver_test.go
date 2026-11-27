@@ -370,3 +370,17 @@ func ExampleVersion_LessThan() {
 	// Output:
 	// 1.2.3 < 3.2.1 == true
 }
+
+func TestLargeNumericPrereleaseOrder(t *testing.T) {
+	for _, pair := range [][2]string{
+		{"99999999999999999999", "100000000000000000000"},
+		{"99999999999999999999", "1alpha"},
+		{"1", "-1"},
+	} {
+		lower := New("1.0.0-" + pair[0])
+		higher := New("1.0.0-" + pair[1])
+		if !lower.LessThan(*higher) || higher.LessThan(*lower) {
+			t.Errorf("expected %s < %s", lower, higher)
+		}
+	}
+}
