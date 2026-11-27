@@ -370,3 +370,15 @@ func ExampleVersion_LessThan() {
 	// Output:
 	// 1.2.3 < 3.2.1 == true
 }
+
+func TestUnmarshalEscapedVersion(t *testing.T) {
+	for _, input := range []string{`"1.2.3-rc+build"`, `"1\u002e2.3-rc\u002bbuild"`} {
+		var v Version
+		if err := json.Unmarshal([]byte(input), &v); err != nil {
+			t.Fatal(err)
+		}
+		if v.String() != "1.2.3-rc+build" {
+			t.Errorf("unmarshaled %s as %s", input, v)
+		}
+	}
+}
