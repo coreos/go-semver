@@ -34,15 +34,16 @@ type Version struct {
 
 type PreRelease string
 
-func splitOff(input *string, delim string) (val string) {
+func splitOff(input *string, delim string) (val string, found bool) {
 	parts := strings.SplitN(*input, delim, 2)
 
 	if len(parts) == 2 {
 		*input = parts[0]
 		val = parts[1]
+		found = true
 	}
 
-	return val
+	return val, found
 }
 
 func New(version string) *Version {
@@ -69,16 +70,25 @@ func Must(v *Version, err error) *Version {
 
 // Set parses and updates v from the given version string. Implements flag.Value
 func (v *Version) Set(version string) error {
-	metadata := splitOff(&version, "+")
-	preRelease := PreRelease(splitOff(&version, "-"))
+	metadata, hasMetadata := splitOff(&version, "+")
+	preStr, hasPreRelease := splitOff(&version, "-")
+	preRelease := PreRelease(preStr)
 	dotParts := strings.SplitN(version, ".", 3)
 
 	if len(dotParts) != 3 {
 		return fmt.Errorf("%s is not in dotted-tri format", version)
 	}
 
+	if hasPreRelease && preStr == "" {
+		return fmt.Errorf("failed to validate pre-release: empty pre-release identifier")
+	}
+
 	if err := validateIdentifier(string(preRelease)); err != nil {
 		return fmt.Errorf("failed to validate pre-release: %v", err)
+	}
+
+	if hasMetadata && metadata == "" {
+		return fmt.Errorf("failed to validate metadata: empty metadata identifier")
 	}
 
 	if err := validateIdentifier(metadata); err != nil {
