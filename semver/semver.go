@@ -17,6 +17,7 @@ package semver
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
@@ -139,7 +140,11 @@ func (v *Version) UnmarshalJSON(data []byte) error {
 	if l < 2 || data[0] != '"' || data[l-1] != '"' {
 		return errors.New("invalid semver string")
 	}
-	return v.Set(string(data[1 : l-1]))
+	var version string
+	if err := json.Unmarshal(data, &version); err != nil {
+		return err
+	}
+	return v.Set(version)
 }
 
 // Compare tests if v is less than, equal to, or greater than versionB,
