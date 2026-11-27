@@ -340,6 +340,11 @@ func TestBadInput(t *testing.T) {
 		"1.2.3.4",
 		"0.88.0-11_e4e5dcabb",
 		"0.88.0+11_e4e5dcabb",
+		"1.0.0-",
+		"1.0.0+",
+		"1.0.0-+",
+		"1.0.0-alpha+",
+		"1.0.0-+build",
 	}
 	for _, b := range bad {
 		if _, err := NewVersion(b); err == nil {
